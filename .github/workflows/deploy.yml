@@ -51,7 +51,7 @@ jobs:
           remote-password: ${{ secrets.FTP_PASSWORD }}
 
           # Path for specific folder on server for files deployment
-          remote-path: /https://afg-fem.org/test
+          remote-path: /test
 
           # Port for SFTP access to server
           remote-port: 22
