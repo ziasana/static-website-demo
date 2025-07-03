@@ -1,57 +1,22 @@
-# This is a basic workflow to upload files 
-# from GitHub to server via GitHub Actions
-name: Publish Website on DEV
+name: Upload complete repo (e.g. website) to a SFTP destination
 
-# Controls when the workflow will run
-on:
+on: [push]
 
-  # Triggers the workflow on push request event 
-  # but only for the specific branch
-  push:
-    branches: [ main ]
-
-# A workflow run is made up of one or more jobs 
-# that can run sequentially or in parallel
 jobs:
-
-  # This workflow contains a single job called "SFTP-Deploy-Action"
-  SFTP-Deploy-Action:
-    name: SFTP-Deploy-Action
-
-    # The type of runner that the job will run on 
-    # (depends on server but usually this value is works)
+  Upload-to-SFTP:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks 
-    # that will be executed as part of the job
     steps:
-
-      # Checks-out your repository under $GITHUB_WORKSPACE, 
-      # so your job can access it
-      - name: Checkout
+      - name: 🚚 Get latest code # Checkout the latest code
         uses: actions/checkout@v3
+
+      - name: 📂 SFTP uploader # Upload to SFTP
+        uses: wangyucode/sftp-upload-action@v2.0.4
         with:
-
-          # Fetch all history for all tags and branches
-          fetch-depth: 0
-
-          # Checkout a specific branch
-          ref: main
-
-      # This is a composite GitHub Action (Linux runner) 
-      # for deploying repository content to remote server
-      - name: SFTP-Deploy-Action
-        uses: milanmk/actions-file-deployer@master
-        with:
-          remote-protocol: sftp
-
-          # Credentials for SFTP access to server using GitHub secrets
-          remote-host: ${{ secrets.SFTP_SERVER }}
-          remote-user: ${{ secrets.FTP_USER }}
-          remote-password: ${{ secrets.FTP_PASSWORD }}
-
-          # Port for SFTP access to server
-          remote-port: 22
+          host: ${{ secrets.SFTP_SERVER }} # Recommended to put the credentials in github secrets.
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 22
+          compress: true # Compression
           forceUpload: true # Optional, Force uploading all files, Default to false(upload only newer files).
           localDir: "." # Required, Absolute or relative to cwd.
           remoteDir: "/" # Required, Absolute path only.
