@@ -1,21 +1,17 @@
-name: Upload complete repo (e.g. website) to a SFTP destination
-on: [push]
-
+on: push
+name: Publish Website
 jobs:
-  deploy_job:
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
     runs-on: ubuntu-latest
-    name: Deploy with Password
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Deploy with Password
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
-        with:
-          username: ${{ secrets.SFTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server: ${{ secrets.SFTP_SERVER }}
-          port: 22
-          local_path: './'
-          remote_path: '/'
-          sftp_only: true
+    - uses: actions/checkout@v2.1.0
+      with:
+        fetch-depth: 2
+    - name: FTP-Deploy-Action
+      uses: SamKirkland/FTP-Deploy-Action@3.1.1
+      with:
+        ftp-server: ${{ secrets.SFTP_SERVER }}
+        ftp-username: ${{ secrets.FTP_USERNAME }}
+        ftp-password: ${{ secrets.FTP_PASSWORD }}
+        port: 22
