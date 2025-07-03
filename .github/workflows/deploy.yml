@@ -14,10 +14,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Upload via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4
+      - name: Upload via SFTP
+        uses: Dylan700/sftp-upload-action@latest
+        
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ${{ secrets.SFTP_SERVER }}
+          port: 22
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./ # directory to upload
