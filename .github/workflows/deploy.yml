@@ -1,22 +1,26 @@
-name: Upload complete repo (e.g. website) to a SFTP destination
+name: SFTP Deploy with Password
 
-on: [push]
+on:
+  push:
+    branches: [ main ] # Change to your default branch if different
 
 jobs:
-  Upload-to-SFTP:
+  deploy:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: 🚚 Get latest code # Checkout the latest code
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: 📂 SFTP uploader # Upload to SFTP
-        uses: wangyucode/sftp-upload-action@v2.0.4
-        with:
-          host: ${{ secrets.SFTP_SERVER }} # Recommended to put the credentials in github secrets.
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          compress: true # Compression
-          forceUpload: true # Optional, Force uploading all files, Default to false(upload only newer files).
-          localDir: "." # Required, Absolute or relative to cwd.
-          remoteDir: "/" # Required, Absolute path only.
-          exclude: ".git,.DS_Store,**/node_modules" # Optional. exclude patterns (glob) like .gitignore, use ',' to split, Default to ''.
+    - name: Upload files via SFTP (Password Auth)
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      with:
+        server: ${{ secrets.SFTP_SERVER }}
+        username: ${{ secrets.SFTP_USERNAME }}
+        password: ${{ secrets.SFTP_PASSWORD }}
+        local_path: './*' # Upload all files from root
+        remote_path: ${{ secrets.SFTP_REMOTE_PATH }}
+        # Optional parameters:
+        # port: ${{ secrets.SFTP_PORT || '22' }}
+        # args: '-r -v' # SFTP arguments
+        # debug: 'true'
