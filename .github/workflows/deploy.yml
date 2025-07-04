@@ -1,8 +1,8 @@
-name: SFTP Deploy with Password
+name: SFTP Deploy with Directory Check
 
 on:
   push:
-    branches: [ main ] # Change to your default branch if different
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -12,15 +12,24 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Upload files via SFTP (Password Auth)
+    - name: Check and create remote directory
+      env:
+        SFTP_SERVER: ${{ secrets.SFTP_SERVER }}
+        SFTP_USERNAME: ${{ secrets.SFTP_USERNAME }}
+        SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+        REMOTE_PATH: '/test'
+      run: |
+        sudo apt-get install -y sshpass
+        sshpass -p "$SFTP_PASSWORD" sftp -o StrictHostKeyChecking=no "$SFTP_USERNAME@$SFTP_SERVER" <<EOF
+        mkdir -p "$REMOTE_PATH"
+        quit
+        EOF
+
+    - name: Upload files via SFTP
       uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         server: ${{ secrets.SFTP_SERVER }}
         username: ${{ secrets.SFTP_USERNAME }}
         password: ${{ secrets.SFTP_PASSWORD }}
-        local_path: './*' # Upload all files from root
+        local_path: './'
         remote_path: '/test'
-        # Optional parameters:
-        # port: ${{ secrets.SFTP_PORT || '22' }}
-        # args: '-r -v' # SFTP arguments
-        # debug: 'true'
