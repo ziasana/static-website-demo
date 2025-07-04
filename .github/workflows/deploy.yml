@@ -19,7 +19,7 @@ jobs:
         username: ${{ secrets.SFTP_USERNAME }}
         password: ${{ secrets.SFTP_PASSWORD }}
         local_path: './*' # Upload all files from root
-        remote_path: ${{ secrets.SFTP_REMOTE_PATH }}
+        remote_path: '/test'
         # Optional parameters:
         # port: ${{ secrets.SFTP_PORT || '22' }}
         # args: '-r -v' # SFTP arguments
